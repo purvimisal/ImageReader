@@ -15,7 +15,10 @@ top.wm_title("IMAGE READER")
 global extracted_text
 extracted_text = ""
 
-def SubmitCallBack(feedback_entry, feedback_submit):
+def ExitWindow(audio):
+	audio.destroy()
+
+def SubmitCallBack(feedback_entry, feedback_submit): #Calculate accuracy of the original text and extracted text (by ocrad) 
 	global accuracy
 	global extracted_text
 	text = feedback_entry.get()
@@ -31,100 +34,51 @@ def SubmitCallBack(feedback_entry, feedback_submit):
 		if extracted_text[i] == text[i]:
 			count += 1
 	a = count * 100 / len(text)
-	text_box = tk.Text(feedback_entry, height = 10, padx = 150, bg = 'gainsboro', font = 'bold')
+	text_box = tk.Text(feedback_entry, height = 10, padx = 150, bg = 'lavender', font = 'bold')
 	text_box.insert(tk.INSERT, 'Accuracy:\n\n')
 	text_box.insert(tk.INSERT, str(a) + ' % ')
 	text_box.pack(side = 'bottom')
 	feedback_submit.destroy()
 
+def CreateAudio(create_audio):
+	global extracted_text
+	extracted_text = extracted_text.lower()
+	tts = gTTS(text = extracted_text, lang = 'en')
+    	tts.save("audio1.mp3")
+    	
+    	
+def PlayAudio(play_audio):
+	global extracted_text
+	voiceEngine = pyttsx.init()
+	voiceEngine.setProperty('rate', 100)
+	voiceEngine.say(extracted_text)
+	voiceEngine.runAndWait()	
 
-def FeedbackCallBack(upload):
+def FeedbackCallBack(upload): #Function to generate a Feedback page where original text can be entered
     feedback = tk.Tk()
     feedback.resizable(width=False, height=False)
     feedback.geometry('{}x{}'.format(500, 200))
     feedback.wm_title("Feedback Page")
-    upload.destroy()   
+    #upload.destroy()   
     feedback_entry = tk.Entry(feedback)
     feedback_submit = tk.Button(feedback,text='Enter',command=lambda:SubmitCallBack(feedback_entry,feedback_submit ))
     feedback_entry.pack()
     feedback_submit.pack()
 
-def AudioCallBack(extracted_text):
+def AudioCallBack(upload): #Function to  generate a page to create the audio file 
 	audio = tk.Tk()
 	audio.resizable(width=False, height=False)
     	audio.geometry('{}x{}'.format(500, 200))
-    	audio.wm_title("Audio Created")
-    	#tts = gTTS(text = extracted_text, lang = 'en')
-    	#tts.save("audio1.mp3")
-    	#engine = pyttsx.init()
-    	#engine.say(extracted_text)
-    	#engine.runAndWait()
-    	
+    	audio.wm_title("Audio Page")
+    	upload.destroy()
+    	create_audio = tk.Button(audio, text= "Save mp3 file", command=lambda: CreateAudio(create_audio))
+    	play_audio = tk.Button(audio, text= "Play mp3 file", command=lambda: PlayAudio(play_audio))
+    	exit = tk.Button(audio, text= "Exit...", command=lambda: ExitWindow(audio))
+    	create_audio.pack()
+    	play_audio.pack()
+    	exit.pack()
+
 	
- 
-"""def HandwritingCallBack(master):
-	global extracted_text
-	master.destroy()
-	handwriting_window = tk.Tk()
-	handwriting_window.resizable(width=False, height=False)
-	handwriting_window.wm_title('Handwriting Recognition')
-	handwriting_window.geometry('{}x{}'.format(500, 200))
-	extracted_text = os.popen('pngtopnm lala.png | ocrad').read()
-	Feedback_button = tk.Button(handwriting_window, text = 'Feedback', command = lambda: FeedbackCallBack(handwriting_window))
-	Feedback_button.pack()
-	text_box = tk.Text(handwriting_window, height = 10, padx = 150, bg = 'lavender', font = 'bold')
-	text_box.insert(tk.INSERT, 'Extracted Text:\n\n')
-	text_box.insert(tk.INSERT, extracted_text)
-	text_box.pack(side = 'bottom')	
-"""
-"""def helloCallBack(top):
-	top.destroy()
-	def paint( event ):
-	   python_green = "#476042"
-	   x1, y1 = ( event.x - 1 ), ( event.y - 1 )
-	   x2, y2 = ( event.x + 1 ), ( event.y + 1 )
-	   w.create_oval( x1, y1, x2, y2, fill = python_green )
-
-	master = tk.Tk()
-	master.title( "Enter text using a mouse" )
-	w = tk.Canvas(master, 
-		   width=canvas_width, 
-		   height=canvas_height)
-	w.pack(expand = 'yes', fill = 'both')
-	w.bind( "<B1-Motion>", paint )
-
-	message = tk.Label( master, text = "Press and Drag the mouse to draw" )
-	message.pack( side = 'bottom' )
-	def quit(event):                           
-	    import sys; sys.exit() 
-
-	widget = tk.Button(master, text='QUIT')
-	widget.pack()
-	widget.bind('<Button-1>', quit) 
-
-	def button_clear(event):
-		w.delete("all")
-
-	def saveim(event):
-		im = ImageGrab.grab(bbox=(425, 245, 925, 396))
-		im.save('lala.png')
-		
-
-	widget = tk.Button(master, text='Done')
-	widget.pack()
-	widget.bind('<Button-1>', saveim)
-	
-	widget = tk.Button(master, text='clear')
-	widget.pack()
-	widget.bind('<Button-1>', button_clear)
-	
-	Analyse_Button = tk.Button(master, text ="Run OCR", command = lambda: HandwritingCallBack(master))
-	Analyse_Button.pack()
-	
-	w.update()	
-	widget.mainloop()
-"""
-
 def BrowseCallBack(upload):
 	global extracted_text
 	file = tkFileDialog.askopenfile(parent=upload,mode='rb',title='Choose a file')
