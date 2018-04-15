@@ -2,7 +2,8 @@ import Tkinter as tk
 import pyscreenshot as ImageGrab
 import os
 import tkFileDialog
-
+from gtts import gTTS 
+import pyttsx
 canvas_width = 500
 canvas_height = 150
 
@@ -30,7 +31,7 @@ def SubmitCallBack(feedback_entry, feedback_submit):
 		if extracted_text[i] == text[i]:
 			count += 1
 	a = count * 100 / len(text)
-	text_box = tk.Text(feedback_entry, height = 10, padx = 150, bg = 'light grey', font = 'bold')
+	text_box = tk.Text(feedback_entry, height = 10, padx = 150, bg = 'gainsboro', font = 'bold')
 	text_box.insert(tk.INSERT, 'Accuracy:\n\n')
 	text_box.insert(tk.INSERT, str(a) + ' % ')
 	text_box.pack(side = 'bottom')
@@ -48,24 +49,35 @@ def FeedbackCallBack(upload):
     feedback_entry.pack()
     feedback_submit.pack()
 
-
-def HandwritingCallBack(master):
+def AudioCallBack(extracted_text):
+	audio = tk.Tk()
+	audio.resizable(width=False, height=False)
+    	audio.geometry('{}x{}'.format(500, 200))
+    	audio.wm_title("Audio Created")
+    	#tts = gTTS(text = extracted_text, lang = 'en')
+    	#tts.save("audio1.mp3")
+    	#engine = pyttsx.init()
+    	#engine.say(extracted_text)
+    	#engine.runAndWait()
+    	
+	
+ 
+"""def HandwritingCallBack(master):
 	global extracted_text
 	master.destroy()
 	handwriting_window = tk.Tk()
 	handwriting_window.resizable(width=False, height=False)
 	handwriting_window.wm_title('Handwriting Recognition')
 	handwriting_window.geometry('{}x{}'.format(500, 200))
-	   
 	extracted_text = os.popen('pngtopnm lala.png | ocrad').read()
 	Feedback_button = tk.Button(handwriting_window, text = 'Feedback', command = lambda: FeedbackCallBack(handwriting_window))
 	Feedback_button.pack()
-	text_box = tk.Text(handwriting_window, height = 10, padx = 150, bg = 'light grey', font = 'bold')
+	text_box = tk.Text(handwriting_window, height = 10, padx = 150, bg = 'lavender', font = 'bold')
 	text_box.insert(tk.INSERT, 'Extracted Text:\n\n')
 	text_box.insert(tk.INSERT, extracted_text)
 	text_box.pack(side = 'bottom')	
-	
-def helloCallBack(top):
+"""
+"""def helloCallBack(top):
 	top.destroy()
 	def paint( event ):
 	   python_green = "#476042"
@@ -111,7 +123,7 @@ def helloCallBack(top):
 	
 	w.update()	
 	widget.mainloop()
-
+"""
 
 def BrowseCallBack(upload):
 	global extracted_text
@@ -119,7 +131,7 @@ def BrowseCallBack(upload):
 	check = file.name[-4:]
 	if file != None and (check == '.png' or check == '.jpg'):  
 		extracted_text = os.popen('pngtopnm ' + file.name[-9:] +' | ocrad').read()
-		text_box = tk.Text(upload, height = 10, padx = 150, bg = 'light grey', font = 'bold')
+		text_box = tk.Text(upload, height = 10, padx = 150, bg = 'lavender', font = 'bold')
 		text_box.insert(tk.INSERT, 'Extracted Text:\n\n')
 		text_box.insert(tk.INSERT, extracted_text)
 		text_box.pack(side = 'bottom')      
@@ -133,26 +145,27 @@ def UploadCallBack(top):
     upload.resizable(width=False, height=False)
     upload.geometry('{}x{}'.format(500, 500))
     upload.wm_title("Uploader Page")
-    uploader_text = tk.Text(upload, height = 5, padx = 150, bg = 'light grey', font = 'bold')
+    uploader_text = tk.Text(upload, height = 5, padx = 150, bg = 'lavender', font = 'bold')
     uploader_text.insert(tk.INSERT, "Please choose a file")
     uploader_text.pack(side = 'top')
     Browse_button = tk.Button(upload, text = 'Browse', command = lambda: BrowseCallBack(upload), width = 20, height = 5)
     Browse_button.pack()
+    Audio_button = tk.Button(upload, text = 'Create Audio', command = lambda: AudioCallBack(upload), width  =20, height = 5)
     Feedback_button = tk.Button(upload, text = 'Feedback', command = lambda: FeedbackCallBack(upload), width  =20, height = 5)
+    Audio_button.pack()
     Feedback_button.pack()
     top.destroy()
     	
 
 #B = tk.Button(top, text ="Writer", command = lambda: helloCallBack(top), width = 20, height = 20)
-C = tk.Button(top, text = 'Uploader', command = lambda: UploadCallBack(top), width = 20, height = 20)
+C = tk.Button(top, text = 'Uploader', command = lambda: UploadCallBack(top), width = 20, height = 10)
 
-text = tk.Text(top, height = 5, padx = 150, bg = 'light grey', font = 'bold')
-text.insert(tk.INSERT, "Please choose an option")
+text = tk.Text(top, height = 5, padx = 150, bg = 'lavender', font = 'bold')
+text.insert(tk.INSERT, "Image Reader Software \n\n\n\n Upload the image file:")
 text.pack(side = 'top')
 
 
 #B.pack(side = 'left')
-C.pack(side = 'bottom')
-
+C.pack(side = 'top')
 top.mainloop()  
 
