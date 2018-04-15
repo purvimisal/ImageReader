@@ -111,7 +111,7 @@ def UploadCallBack(top):
     top.destroy()
     	
 
-#B = tk.Button(top, text ="Writer", command = lambda: helloCallBack(top), width = 20, height = 20)
+
 C = tk.Button(top, text = 'Uploader', command = lambda: UploadCallBack(top), width = 20, height = 10)
 
 text = tk.Text(top, height = 5, padx = 150, bg = 'lavender', font = 'bold')
